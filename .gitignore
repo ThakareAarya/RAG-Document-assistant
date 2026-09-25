@@ -1,0 +1,25 @@
+# Python Bytecode and Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Environments and Secrets
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# FAISS Vector Storage Artifacts & Uploads
+vectorstore/*.bin
+vectorstore/*.json
+data/uploads/
+data/samples/*.tmp
+
+# IDE & OS Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

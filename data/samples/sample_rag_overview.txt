@@ -1,0 +1,30 @@
+# Introduction to Retrieval-Augmented Generation (RAG)
+
+Retrieval-Augmented Generation (RAG) is an architectural pattern that optimizes the output of large language models (LLMs) by referencing an authoritative knowledge base outside of its training data sources before generating a response.
+
+## Why RAG is Essential for Enterprise AI
+Large Language Models (LLMs) have transformed artificial intelligence, but they possess inherent limitations:
+1. Knowledge Cutoff: LLMs cannot know information created after their training window.
+2. Hallucinations: Models may invent plausible-sounding but factually incorrect statements.
+3. Lack of Domain Specificity: Models do not have access to proprietary internal company documents, customer records, or specialized codebases.
+
+RAG overcomes these shortcomings by marrying dense semantic retrieval with generative LLM reasoning.
+
+## Core Components of the RAG Pipeline
+
+### 1. Document Ingestion & Chunking
+Raw documents such as PDFs, Word files (.docx), and plain text (.txt) are ingested into the pipeline. Because LLMs have context window limits, documents are segmented into smaller passages using recursive character text splitting. Common chunk sizes range between 500 and 1,000 characters with an overlap of 100 characters to prevent loss of context across boundaries.
+
+### 2. Local Dense Embeddings
+Text chunks are passed to an embedding model such as `sentence-transformers/all-MiniLM-L6-v2`. This model converts each chunk into a 384-dimensional dense numerical vector. When vectors are L2-normalized, computing the dot product between two vectors is mathematically identical to computing their cosine similarity.
+
+### 3. FAISS Vector Database
+Facebook AI Similarity Search (FAISS) is an open-source library that enables efficient similarity search and clustering of dense vectors. Using `IndexFlatIP` (Inner Product index) on normalized vectors enables exact, fast nearest-neighbor retrieval with millisecond latencies.
+
+### 4. Groq Inference Engine & Llama 3.3 70B
+Once the top-k most relevant chunks are retrieved from FAISS, they are structured into a grounded context prompt. This prompt is submitted to the Groq API running `llama-3.3-70b-versatile`. Groq's Language Processing Units (LPUs) provide blazing inference speeds exceeding 250 tokens per second.
+
+### 5. Evaluation and Metrics
+A production RAG pipeline requires continuous evaluation:
+- Retrieval Relevance: Evaluates whether retrieved chunks have high cosine similarity scores with the user's query and hit key target concepts.
+- Answer Accuracy: Measures semantic similarity (via embedding cosine distance) and token F1 overlap between the generated response and ground truth answers.
